@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  jobmanager:
+    image: flink-kafka-avro:1.18
+    container_name: kappa-jobmanager
+    ports:
+      - "8082:8081"  # Changed to 8082 to avoid conflict
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    command: jobmanager
+    networks:
+      - kappa-net
+
+  taskmanager:
+    image: flink-kafka-avro:1.18
+    container_name: kappa-taskmanager
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    command: taskmanager
+    networks:
+      - kappa-net
+    depends_on:
+      - jobmanager
+
+networks:
+  kappa-net:
+    external: true
